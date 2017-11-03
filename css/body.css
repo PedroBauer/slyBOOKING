@@ -1,0 +1,148 @@
+body{
+
+	background: url(img/background.png) no-repeat  no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+
+h1{
+	font-size: 35px;
+}
+
+h3{
+	font-size:22px;
+	font-family:Arial, Helvetica, sans-serif;
+}
+
+p{
+	font-family:Arial, Helvetica, sans-serif;
+}
+
+img{
+	width:100%;
+}
+
+.centered{
+	width:1002px;/*600*/
+	margin:0 auto;
+	height:100%;
+}
+
+#customerInformation{
+	display:inline-block;
+	width:auto;
+	margin-bottom:20px;
+	background:rgba(255,255,255,0.8);
+	padding:10px;
+	border:1px solid black;
+	-webkit-box-shadow: 0px 11px 6px -6px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 11px 6px -6px rgba(0,0,0,0.75);
+	box-shadow: 0px 11px 6px -6px rgba(0,0,0,0.75);
+}
+
+
+.inputText,
+.inputLabel{
+	display:block;
+	width:auto;
+}
+
+.inputLabel{
+	/*width:75px !important;*/
+	width:auto;
+}
+
+#textInput{
+	width:50px;
+}
+
+#datepicker{
+	width:137px;
+}
+
+#times{
+
+}
+
+
+
+
+
+/* ROOMS */
+
+a {
+	color:black !important;
+	text-decoration:none !important;
+}
+
+
+.rooms{
+	display:inline-block;
+	width:31%;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	background-color: white;
+	padding:5px;
+	
+}
+
+
+
+.rooms:hover{
+	background-color:#f2f2f2;
+}
+
+#room-name{
+	padding-top: 10px;
+}
+
+#room-image{
+
+}
+
+
+#room-peopleCount{
+	display: inline-block;
+	padding-top: 5px;
+}
+
+#room-preis{
+}
+
+
+#room-price,
+#room-person_min,
+#room-person_max,
+#room-squaremeteres{
+	
+}
+
+
+#rightContainer{
+	float:right;
+	width:49%;
+}
+
+#leftContainer{
+	float:left;
+	width:49%;
+}
+
+/* BOOKING CUSTOMER */
+
+.customer-form{
+	display:inline-block;
+	width:49%;	
+}
+.room-overview{
+	display:inline-block;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	background-color: white;
+	width:31%;
+	padding:5px;
+	float:right;
+}

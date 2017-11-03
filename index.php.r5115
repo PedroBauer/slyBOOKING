@@ -1,0 +1,160 @@
+<?php 
+		
+
+require_once('/includes/db.php');
+
+$query="SELECT * FROM settings";
+
+$db_query=mysqli_query($db,$query);
+if ( ! $db_query )
+{
+	die('Ungültige Abfrage: ' . mysqli_error());
+}
+
+$dateTime = mysqli_fetch_array($db_query, MYSQL_ASSOC);
+$roomsAndBookings = array();
+$roomSearch = array();
+
+if(isset($_GET['submit'])) {
+		
+	/*echo "<pre>";
+	 print_r($_SESSION);
+	echo "</pre>";*/
+	
+	$query2 = "SELECT * FROM booking JOIN room ON booking.room_id = room.ID";
+	//$query2 = "SELECT * FROM room JOIN booking ON room.ID = booking.room_id";
+	$db_query2=mysqli_query($db,$query2);
+	while($roomAndBookingQuery = mysqli_fetch_array($db_query2, MYSQL_ASSOC)) {
+		array_push($roomsAndBookings, $roomAndBookingQuery);
+	}
+	
+	// 	print_r($roomsAndBookings);
+	foreach($roomsAndBookings as $roomAndBooking) {
+		// Überprüfung ob die Zimmer in der Personen skala drinnen sind.
+		//if($_GET['person'] >= $roomAndBooking['person_min'] && $_GET['person'] <= $roomAndBooking['person_max']) {
+			if(strtotime($roomAndBooking['date']) == strtotime($_GET['date']) && $roomAndBooking['time_of_day'] == 'wholeday') {
+				echo "Its wholeday";
+			} else {
+				if(strtotime($roomAndBooking['date']) == strtotime($_GET['date']) && $roomAndBooking['time_of_day'] == 'morning' && $roomAndBooking['time_of_day'] == 'afternoon'){
+					
+				} else {
+					if(strtotime($roomAndBooking['date']) == strtotime($_GET['date']) && $roomAndBooking['time_of_day'] == $_GET['timeOfDay']) {
+						echo "Schon gebucht ".$roomAndBooking['ID']."<br/>";
+					} else {
+						echo "Noch frei ".$roomAndBooking['ID']."<br/>";
+						array_push($roomSearch, $roomAndBooking);
+				 	}
+				}
+			}
+			
+		//}
+		echo "<pre>";
+		print_r($roomAndBooking);
+		echo "</pre>";
+	}
+	$newArray = array();		
+	for($i=0; $i<count($roomSearch); $i++){
+		if($i == 0) {
+			array_push($newArray, $roomSearch[$i]);
+		} else {
+			if($roomSearch[$i]['ID'] == $roomSearch[$i-1]['ID']) {
+				echo "gleiche ID's";
+			} else {
+				array_push($newArray, $roomSearch[$i]);
+			}
+		}
+	}
+}
+
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+		<link href="css/reset.css" type="text/css" rel="stylesheet">
+		<link href="css/body.css" type="text/css" rel="stylesheet">
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+ 		<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+ 		  <script>
+		  $(function() {
+		    $( "#datepicker" ).datepicker({ dateFormat: 'dd.mm.yy' }).val();
+		  });
+		  function updateTextInput(val) {
+		      document.getElementById('textInput').value=val; 
+		   };
+		  function updateRangeInput(val) {
+			  document.getElementById('rangeInput').value=val; 
+		   };
+		  </script>
+	</head>
+	<body>
+		<div id="page">
+			<div id="mainArea">
+				<div class="centered">
+					<form action="" method="GET">
+						<fieldset id="customerInformation">
+							<div class="inputLabel">Personen: </div>
+							<div class="inputText"><input id="rangeInput" type="range" name="person" max="1000" onchange="updateTextInput(this.value);" required /></div>
+							<input type="text" id="textInput" value="" onchange="updateRangeInput(this.value);">
+							<div class="clear"></div>
+							
+							<div class="inputLabel">Datum: </div>
+							<div class="inputText"><input type="text" id="datepicker" name="date" required /></div>
+							
+							<div id="times">
+								<div class="dateTime">
+									<input type="radio" id="morning" name="timeOfDay" value="morning" required />
+									<label for="morning">Morgen (<?php echo $dateTime['morningHours'];?>)</label>
+								</div>
+								<div class="dateTime">
+									<input type="radio" id="afternoon" name="timeOfDay" value="afternoon" required />
+									<label for="evening">Nachtmittag (<?php echo $dateTime['afternoonHours'];?>)</label>
+								</div>
+								<div class="dateTime">
+									<input type="radio" id="wholeday" name="timeOfDay" value="wholeday" required />
+									<label for="Ganzertag">Ganzertag (<?php echo $dateTime['wholedayHours'];?>)</label>
+								</div>
+							</div>
+							<div class="clear"></div>
+							<div class="inputLabel"></div>
+							<div class="inputText"><input type="submit" name="submit" value="Submit"></div>
+						</fieldset>
+					</form>
+					
+						<?php
+						$b=0;
+						/*while($booking = mysqli_fetch_array($db_query, MYSQL_ASSOC)){*/
+						foreach($newArray as $room){
+							if($_GET['timeOfDay']=='morning'){
+								$bookingPricing=$newArray[$b]['price_morning'];
+							}
+							if($_GET['timeOfDay']=='afternoon'){
+								$bookingPricing=$newArray[$b]['price_afternoon'];
+							}
+							if($_GET['timeOfDay']=='wholeDay'){
+								$bookingPricing=$newArray[$b]['price_wholeday'];
+							}
+							$b++;
+							/*echo "<pre>";
+							print_r($newArray);
+							echo "</pre>";*/
+						?>
+						<div class="rooms" data-minPeople="<?php echo $room['person_min'];?>" data-maxPeople="<?php echo $room['person_max'];?>" >
+							<a href="detailPage.php?roomid=<?php echo $room['ID'];?>&people=<?php echo $_GET['person'];?>&date=<?php echo $_GET['date'];?>&timeofday=<?php echo $_GET['timeOfDay'];?>">
+								<fieldset id="roomInformation">
+									<div id="room-<?php echo $room['ID'];?>" >
+										<div id="room-image"><img src="images/demo-zimmer.jpg" width="300px"></div>
+										<div id="room-name"><h3><?php echo $room['name'];?></h3></div>
+										<div id="room-peopleCount"><p><?php echo $room['person_min'];?> - <?php echo $room['person_max'];?> Personen | <?php echo $bookingPricing;?> CHF.-</p></div>
+									</div>
+								</fieldset>
+							</a>
+						</div>
+						<?php }?>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

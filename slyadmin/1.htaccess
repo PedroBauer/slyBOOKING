@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "MESSAGE TO USER"
+AuthUserFile S:/windows-ide/xampp/htdocs/buchung2016/slyadmin/.htpasswd
+Require valid-user
